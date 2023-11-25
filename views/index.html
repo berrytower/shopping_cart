@@ -114,6 +114,27 @@
                         </td>
                     </tr>
                 </tbody>
+            </table>
+            <h3>新增商品</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>名稱</th>
+                        <th>價格</th>
+                        <th>描述</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" id="name"></td>
+                        <td><input type="text" id="price"></td>
+                        <td><input type="text" id="description"></td>
+                        <td>
+                            <button @click="addProduct">新增</button>
+                        </td>
+                    </tr>
+                </tbody>
 
         </div>
     </div>
@@ -186,8 +207,10 @@
                     .then(function(res){return res.text(); }) //取得傳回值，轉為文字
                     .then(function(data){
                         console.log(data);
+                        alert('新增成功');
                         //that.sellerProducts=JSON.parse(data);
                     })
+                    
 
                 },
                 editProduct(productId) {
