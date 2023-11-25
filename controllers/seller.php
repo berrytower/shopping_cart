@@ -1,8 +1,6 @@
 <?php
 require_once('../models/ProductModel.php');
 
-// 資料庫連線和其他設定...
-
 $productModel = new ProductModel($db);
 $products = $productModel->getAllProducts();
 
