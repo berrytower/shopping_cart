@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html data-role="customer"> <!-- 或者 data-role="seller" -->
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script type="text/javascript" src="https://unpkg.com/vue@next"></script>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+    <title>Simple Shopping</title>
+</head>
+<body>
+    <!--用按鈕切換身分-->
+    <button id="customer">顧客</button>
+    <button id="seller">賣家</button>
+    <div id="app">
+        <h2>目前身分：<span id="role"></span></h2>
+        <div id="customer-ui">
+            <h3>商品列表</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>名稱</th>
+                        <th>價格</th>
+                        <th>描述</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="product in products">
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.price }}</td>
+                        <td>{{ product.description }}</td>
+                        <td>
+                            <button @click="addToCart(product.id)">加入購物車</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <h3>購物車</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>名稱</th>
+                        <th>價格</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in cartItems">
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.price }}</td>
+                        <td>
+                            <button @click="removeFromCart(item.id)">移除</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="seller-ui", style="display: none;">
+            <h3>商品列表</h3>
+            <ul>
+                <li v-for="product in sellerProducts">
+                    {{ product.name }} - {{ product.price }} - {{ product.description }}
+                    <button @click="editProduct(product.id)">編輯</button>
+                    <button @click="deleteProduct(product.id)">刪除</button>
+                </li>
+            </ul>
+            <h3>新增商品</h3>
+            <form @submit.prevent="addProduct">
+                <label for="name">名稱</label>
+                <input type="text" id="name" name="name" />
+                <label for="description">描述</label>
+                <input type="text" id="description" name="description" />
+                <label for="price">價格</label>
+                <input type="number" id="price" name="price" />
+                <button type="submit">新增</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        // 用來切換身分
+        document.getElementById('customer').addEventListener('click', () => {
+            document.querySelector('html').setAttribute('data-role', 'customer');
+            document.getElementById('role').innerText = document.querySelector('html').getAttribute('data-role');
+            document.getElementById('customer-ui').style.display = 'block';
+            document.getElementById('seller-ui').style.display = 'none';
+        });
+        document.getElementById('seller').addEventListener('click', () => {
+            document.querySelector('html').setAttribute('data-role', 'seller');
+            document.getElementById('role').innerText = document.querySelector('html').getAttribute('data-role');
+            document.getElementById('seller-ui').style.display = 'block';
+            document.getElementById('customer-ui').style.display = 'none';
+        });
+        
+        const shoppingCart = Vue.createApp({
+            data() {
+                return {
+                    products: [],
+                    cartItems: [],
+                    sellerProducts: [],
+                };
+            },
+            methods: {
+                // 客戶角色的方法
+                loadCustomerData() {
+                    // 實作載入商品列表的邏輯
+                    const that=this;
+                    let url="../controllers/products.php?act=list";
+                    fetch(url)
+                    .then(function(res){return res.text(); }) //取得傳回值，轉為文字
+                    .then(function(data){ 
+                        console.log(data);
+                        console.log(JSON.parse(data));
+                        that.products=JSON.parse(data);
+                    })
+                },
+                addToCart(productId) {
+                    // 實作將商品加入購物車的邏輯
+                },
+                removeFromCart(itemId) {
+                    // 實作將商品從購物車移除的邏輯
+                },
+                // 商家角色的方法
+                loadSellerData() {
+                    // 實作載入商品列表的邏輯
+                    const that=this;
+                    let url="../controllers/products.php?act=list";
+                    fetch(url)
+                    .then(function(res){return res.text(); }) //取得傳回值，轉為文字
+                    .then(function(data){ 
+                        console.log(data);
+                        that.sellerProducts=JSON.parse(data);
+                    })
+                },
+                addProduct() {
+                    // 實作新增商品的邏輯
+                    const that=this;
+                    let url="../controllers/products.php?act=add";
+                    let data=new FormData();
+                    data.append('name',document.getElementById('name').value);
+                    data.append('description',document.getElementById('description').value);
+                    data.append('price',document.getElementById('price').value);
+
+                    fetch(url,{
+                        method:'POST',
+                        body:data
+                    })
+                    .then(function(res){return res.text(); }) //取得傳回值，轉為文字
+                    .then(function(data){ 
+                        console.log(data);
+                        //that.sellerProducts=JSON.parse(data);
+                    })
+
+                },
+                editProduct(productId) {
+                    // 實作編輯商品的邏輯
+                },
+                deleteProduct(productId) {
+                    // 實作刪除商品的邏輯
+                },
+              
+            },
+            mounted() {
+                const role = document.querySelector('html').getAttribute('data-role');
+                if (role === 'customer') {
+                    this.loadCustomerData();
+                } else if (role === 'seller') {
+                    this.loadSellerData();
+   
+                }
+            },
+        });
+        shoppingCart.mount('#app');
+    </script>
+</body>
+</html>
