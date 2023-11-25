@@ -128,14 +128,16 @@
                 <tbody>
                     <tr>
                         <td><input type="text" id="name"></td>
-                        <td><input type="text" id="price"></td>
+                        <td>
+                            <input type="number" id="price" step="1" min="0">
+                        </td>
                         <td><input type="text" id="description"></td>
                         <td>
                             <button @click="addProduct">新增</button>
                         </td>
                     </tr>
                 </tbody>
-
+            </table>
         </div>
     </div>
     <script>
@@ -205,13 +207,10 @@
                         body:data
                     })
                     .then(function(res){return res.text(); }) //取得傳回值，轉為文字
-                    .then(function(data){
-                        console.log(data);
-                        alert('新增成功');
-                        //that.sellerProducts=JSON.parse(data);
+                    .then(function(data){ 
+                        alert(JSON.parse(data)['message']);     
                     })
                     
-
                 },
                 editProduct(productId) {
                     // 實作編輯商品的邏輯
