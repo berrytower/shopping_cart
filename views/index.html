@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html data-role="customer">
+<html data-role="customer"> <!-- 或者 data-role="seller" -->
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <script type="text/javascript" src="https://unpkg.com/vue@next"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <style>
+    
         table {
             width: 100%;
             border-collapse: collapse;
@@ -32,124 +32,128 @@
             background-color: #45a049;
         }
 
-        .hidden {
+        #customer-ui {
             display: none;
         }
+        #seller-ui {
+            display: none;
+        }
+
     </style>
     <title>Simple Shopping</title>
 </head>
 <body>
-    <div class="container my-4">
-        <button id="customer" class="btn btn-primary">顧客</button>
-        <button id="seller" class="btn btn-secondary">賣家</button>
-
-        <div id="app" class="mt-4">
-            <h2>目前身份：<span id="role"></span></h2>
-            <div id="customer-ui">
-                <h3>商品列表</h3>
-                <button @click="loadCustomerData" class="btn btn-info">更新</button>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>名稱</th>
-                            <th>價格</th>
-                            <th>描述</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="product in products">
-                            <td>{{ product.name }}</td>
-                            <td>{{ product.price }}</td>
-                            <td>{{ product.description }}</td>
-                            <td>
-                                <button @click="addToCart(product.id)" class="btn btn-success">加入購物車</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <h3>購物車</h3>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>名稱</th>
-                            <th>價格</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="item in cartItems">
-                            <td>{{ item.name }}</td>
-                            <td>{{ item.price }}</td>
-                            <td>
-                                <button @click="removeFromCart(item.id)" class="btn btn-danger">移除</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div id="seller-ui" class="hidden">
-                <h3>商品列表</h3>
-                <button @click="loadSellerData" class="btn btn-info">更新</button>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>名稱</th>
-                            <th>價格</th>
-                            <th>描述</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="product in sellerProducts">
-                            <td>{{ product.name }}</td>
-                            <td>{{ product.price }}</td>
-                            <td>{{ product.description }}</td>
-                            <td>
-                                <button @click="editProduct(product.id)" class="btn btn-warning">編輯</button>
-                                <button @click="deleteProduct(product.id)" class="btn btn-danger">刪除</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <h3>新增商品</h3>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>名稱</th>
-                            <th>價格</th>
-                            <th>描述</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><input type="text" id="name" class="form-control"></td>
-                            <td>
-                                <input type="number" id="price" step="1" min="0" class="form-control">
-                            </td>
-                            <td><input type="text" id="description" class="form-control"></td>
-                            <td>
-                                <button @click="addProduct" class="btn btn-primary">新增</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+    <!--用按鈕切換身分-->
+    <button id="customer">顧客</button>
+    <button id="seller">賣家</button>
+    <div id="app">
+        <h2>目前身分：<span id="role"></span></h2>
+        <div id="customer-ui">
+            <h3>商品列表</h3>
+            <button @click="loadCustomerData">更新</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>名稱</th>
+                        <th>價格</th>
+                        <th>描述</th>
+                        <th>數量</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="product in products">
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.price }}</td>
+                        <td>{{ product.description }}</td>
+                        <td>
+                            <input id='quantity' type="number" step="1" min="0">
+                        <td>
+                            <button @click="addToCart(product.id, product.price)">加入購物車</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <h3>購物車</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>名稱</th>
+                        <th>價格</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in cartItems">
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.price }}</td>
+                        <td>
+                            <button @click="removeFromCart(item.id)">移除</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="seller-ui">
+            <h3>商品列表</h3>
+            <button @click="loadSellerData">更新</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>名稱</th>
+                        <th>價格</th>
+                        <th>描述</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="product in sellerProducts">
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.price }}</td>
+                        <td>{{ product.description }}</td>
+                        <td>
+                            <button @click="editProduct(product.id)">編輯</button>
+                            <button @click="deleteProduct(product.id)">刪除</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <h3>新增商品</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>名稱</th>
+                        <th>價格</th>
+                        <th>描述</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" id="name"></td>
+                        <td>
+                            <input type="number" id="price" step="1" min="0">
+                        </td>
+                        <td><input type="text" id="description"></td>
+                        <td>
+                            <button @click="addProduct">新增</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
-
     <script>
+        // 用來切換身分
         document.getElementById('customer').addEventListener('click', () => {
             document.querySelector('html').setAttribute('data-role', 'customer');
-            document.getElementById('role').innerText = '顧客';
+            document.getElementById('role').innerText = document.querySelector('html').getAttribute('data-role');
             document.getElementById('customer-ui').style.display = 'block';
             document.getElementById('seller-ui').style.display = 'none';
         });
-
         document.getElementById('seller').addEventListener('click', () => {
             document.querySelector('html').setAttribute('data-role', 'seller');
-            document.getElementById('role').innerText = '賣家';
+            document.getElementById('role').innerText = document.querySelector('html').getAttribute('data-role');
             document.getElementById('seller-ui').style.display = 'block';
             document.getElementById('customer-ui').style.display = 'none';
         });
@@ -163,81 +167,88 @@
                 };
             },
             methods: {
+                // 客戶角色的方法
                 loadCustomerData() {
                     // 實作載入商品列表的邏輯
-                    // 需API
-                    this.products = [
-                        { id: 1, name: '商品A', price: 100, description: '描述A' },
-                        { id: 2, name: '商品B', price: 200, description: '描述B' },
-                        // 更多商品...
-                    ];
+                    const that=this;
+                    let url="../controllers/products.php?act=list";
+                    fetch(url)
+                    .then(function(res){return res.text(); }) //取得傳回值，轉為文字
+                    .then(function(data){
+                        console.log(data);
+                        console.log(JSON.parse(data));
+                        that.products=JSON.parse(data);
+                    })
                 },
-                addToCart(productId) {
-                    // 實作將商品加入購物車的邏輯
-                    const product = this.products.find(p => p.id === productId);
-                    if (product) {
-                        this.cartItems.push(product);
-                    }
+                addToCart(productId, price) {
+                    const that=this;
+                    let url="../controllers/cart.php?act=add";
+                    quantity=document.getElementById('quantity').value;
+                    data=new FormData();
+                    data.append('productId',productId);
+                    data.append('quantity',quantity);
+                    data.append('price',price);
+                    fetch(url,{
+                        method:'POST',
+                        body:data
+                    })
+                    .then(function(res){return res.text(); }) //取得傳回值，轉為文字
+                    .then(function(data){ 
+                        console.log(data);
+                        alert(JSON.parse(data)['message']);     
+                    })
+                },
+                loadCartData() {
+                    // 實作載入購物車資料的邏輯
                 },
                 removeFromCart(itemId) {
                     // 實作將商品從購物車移除的邏輯
-                    this.cartItems = this.cartItems.filter(item => item.id !== itemId);
                 },
+                // 商家角色的方法
                 loadSellerData() {
-                    // 實作加載賣家商品列表的邏輯
-                    // 需API
-                    this.sellerProducts = [
-                        { id: 1, name: '商品A', price: 100, description: '描述A' },
-                        { id: 2, name: '商品B', price: 200, description: '描述B' },
-                        // 更多商品...
-                    ];
+                    const that=this;
+                    let url="../controllers/products.php?act=list";
+                    fetch(url)
+                    .then(function(res){return res.text(); }) //取得傳回值，轉為文字
+                    .then(function(data){
+                        console.log(data);
+                        that.sellerProducts=JSON.parse(data);
+                    })
                 },
                 addProduct() {
-                const newProduct = {
-                    id: new Date().getTime(),  
-                    name: document.getElementById('name').value,
-                    price: document.getElementById('price').value,
-                    description: document.getElementById('description').value
-                };
-                this.sellerProducts.push(newProduct);
+                    const that=this;
+                    let url="../controllers/products.php?act=add";
+                    let data=new FormData();
+                    data.append('name',document.getElementById('name').value);
+                    data.append('description',document.getElementById('description').value);
+                    data.append('price',document.getElementById('price').value);
 
-                fetch('backend-url', {  // 需更換後端url
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(productData)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Success:', data);
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
+                    fetch(url,{
+                        method:'POST',
+                        body:data
+                    })
+                    .then(function(res){return res.text(); }) //取得傳回值，轉為文字
+                    .then(function(data){ 
+                        alert(JSON.parse(data)['message']);     
+                    })
+                    
                 },
-                /*addProduct() {
-                    // 實作添加新商品的邏輯
-                    // 需API
-                    const newProduct = {
-                        id: new Date().getTime(),  
-                        name: document.getElementById('name').value,
-                        price: document.getElementById('price').value,
-                        description: document.getElementById('description').value
-                    };
-                    this.sellerProducts.push(newProduct);
-                },*/
                 editProduct(productId) {
                     // 實作編輯商品的邏輯
-                    // 
                 },
                 deleteProduct(productId) {
-                    // 實作删除商品的邏輯
-                    this.sellerProducts = this.sellerProducts.filter(p => p.id !== productId);
+                    // 實作刪除商品的邏輯
                 },
+
             },
             mounted() {
-                this.loadCustomerData();
+                const role = document.querySelector('html').getAttribute('data-role');
+                if (role === 'customer') {
+                    this.loadCustomerData();
+                } else if (role === 'seller') {
+                    this.loadSellerData();
+
+                }
             },
         });
         shoppingCart.mount('#app');

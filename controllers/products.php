@@ -36,3 +36,4 @@ if ($_GET['act'] == 'add') {
     header('Content-Type: application/json');
     echo json_encode($products);
 }
+

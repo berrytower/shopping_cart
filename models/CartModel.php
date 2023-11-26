@@ -7,11 +7,16 @@ class CartModel {
         $this->db = $db;
     }
 
-    public function getCartItems() {
-        $query = "SELECT c.*, p.name, p.price FROM Cart c JOIN Products p ON c.product_id = p.id";
-        $result = $this->db->query($query);
-        return $result->fetchAll(PDO::FETCH_ASSOC);
-    }
+    public function addCartItem($productId, $quantity) {
+        $sql = "insert into shopping_cart (product_id, quantity) values (?, ?)";
+        $stmt = mysqli_prepare($this->db, $sql);
 
-    // 可以根據需要新增其他方法，如新增商品至購物車、更新購物車商品數量等
+        mysqli_stmt_bind_param($stmt, 'ii', $productId, $quantity);
+        if (mysqli_stmt_execute($stmt)) {
+            return mysqli_insert_id($this->db);
+        } else {
+            return false;
+        }
+    }
+    // 缺: 刪除購物車商品、列出購物車商品
 }
