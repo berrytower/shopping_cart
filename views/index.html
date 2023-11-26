@@ -193,16 +193,40 @@
                     ];
                 },
                 addProduct() {
+                const newProduct = {
+                    id: new Date().getTime(),  
+                    name: document.getElementById('name').value,
+                    price: document.getElementById('price').value,
+                    description: document.getElementById('description').value
+                };
+                this.sellerProducts.push(newProduct);
+
+                fetch('backend-url', {  // 需更換後端url
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(productData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+                },
+                /*addProduct() {
                     // 實作添加新商品的邏輯
                     // 需API
                     const newProduct = {
-                        id: new Date().getTime(),  // 仅作为示例，实际应由后端生成ID
+                        id: new Date().getTime(),  
                         name: document.getElementById('name').value,
                         price: document.getElementById('price').value,
                         description: document.getElementById('description').value
                     };
                     this.sellerProducts.push(newProduct);
-                },
+                },*/
                 editProduct(productId) {
                     // 實作編輯商品的邏輯
                     // 
