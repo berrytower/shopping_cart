@@ -99,15 +99,16 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="product in products">
+                    <tr v-for="product in products" :key="product.id">
                         <td>{{ product.name }}</td>
                         <td>{{ product.price }}</td>
                         <td>{{ product.description }}</td>
                         <td>
-                            <input id='quantity' type="number" step="1" min="0" title="請輸入所需數量">
+                            <!-- 使用 v-model 綁定數量 -->
+                            <input type="number" v-model="product.quantity" step="1" min="0" title="請輸入所需數量">
                         </td>
                         <td>
-                            <button @click="addToCart(product.id, product.price)">加入購物車</button>
+                            <button @click="addToCart(product.id, product.price, product.quantity)">加入購物車</button>
                         </td>
                     </tr>
                 </tbody>
@@ -257,26 +258,27 @@
                             that.products = JSON.parse(data);
                         })
                 },
-                addToCart(productId, price) {
+                
+
+                addToCart(productId, price, quantity) {
                     const that = this;
                     let url = "../controllers/cart.php?act=add";
-                    quantity = document.getElementById('quantity').value;
+                    // 這裡不再需要使用 getElementById 來獲取數量
                     data = new FormData();
                     data.append('productId', productId);
-                    data.append('quantity', quantity);
+                    data.append('quantity', quantity); // 直接使用傳遞的 quantity 參數
                     data.append('price', price);
                     fetch(url, {
                         method: 'POST',
                         body: data
                     })
-                        .then(function (res) { return res.text(); }) //取得傳回值，轉為文字
-                        .then(function (data) {
-                            console.log(data);
-                            alert(JSON.parse(data)['message']);
-                            that.loadCartData();
-                        })
+                    .then(function (res) { return res.text(); }) //取得傳回值，轉為文字
+                    .then(function (data) {
+                        console.log(data);
+                        alert(JSON.parse(data)['message']);
+                        that.loadCartData();
+                    })
                 },
-
 
                 loadCartData() {
                     // 實作載入購物車資料的邏輯
