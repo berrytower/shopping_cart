@@ -13,7 +13,7 @@ switch ($action) {
         if ($quantity <= 0) {
             $response = ['success' => false, 'message' => 'Quantity must be greater than 0'];
         } else {
-            $cartItemId = $cartModel->addCartItem($productId, $quantity, $price);
+            $cartItemId = $cartModel->addCartItem($productId, $quantity);
             if ($cartItemId) {
                 $response = ['success' => true, 'message' => 'Cart item added successfully', 'cartItemId' => $cartItemId];
             } else {

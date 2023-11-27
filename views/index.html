@@ -79,22 +79,22 @@
 </head>
 
 <body>
-    <!-- 用按鈕切換身分 -->
     <button id="customer">顧客</button>
     <button id="seller">賣家</button>
     <div id="app">
         <h2>目前身分：<span id="role"></span></h2>
+
+        <!-- 顧客界面 -->
         <div id="customer-ui">
             <h3>商品列表</h3>
             <button @click="loadCustomerData">更新</button>
             <table>
-                <!-- 更新以下表單元素的label和title -->
                 <thead>
                     <tr>
-                        <th><label for="name">名稱</label></th>
-                        <th><label for="price">價格</label></th>
-                        <th><label for="description">描述</label></th>
-                        <th><label for="quantity">數量</label></th>
+                        <th>名稱</th>
+                        <th>價格</th>
+                        <th>描述</th>
+                        <th>數量</th>
                         <th>操作</th>
                     </tr>
                 </thead>
@@ -104,8 +104,7 @@
                         <td>{{ product.price }}</td>
                         <td>{{ product.description }}</td>
                         <td>
-                            <!-- 使用 v-model 綁定數量 -->
-                            <input type="number" v-model="product.quantity" step="1" min="0" title="請輸入所需數量">
+                            <input type="number" v-model="product.quantity" step="1" min="0" required>
                         </td>
                         <td>
                             <button @click="addToCart(product.id, product.price, product.quantity)">加入購物車</button>
@@ -113,24 +112,26 @@
                     </tr>
                 </tbody>
             </table>
+
             <h3>購物車</h3>
             <table>
-                <!-- 更新以下表單元素的label和title -->
                 <thead>
                     <tr>
-                        <th><label for="cart-name">名稱</label></th>
-                        <th><label for="cart-price">價格</label></th>
-                        <th><label for="cart-quantity">數量</label></th>
+                        <th>名稱</th>
+                        <th>價格</th>
+                        <th>數量</th>
                         <th>小計</th>
                         <th>操作</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="item in cartItems">
+                    <tr v-for="item in cartItems" :key="item.id">
                         <td>{{ item.name }}</td>
                         <td>{{ item.price }}</td>
-                        <td>{{ item.quantity }}</td>
-                        <td>{{ item.price*item.quantity }}</td>
+                        <td>
+                            <input type="number" v-model="item.quantity" @change="updateQuantity(item.id, item.quantity)" min="0">
+                        </td>
+                        <td>{{ item.price * item.quantity }}</td>
                         <td>
                             <button @click="removeFromCart(item.id)">移除</button>
                         </td>
@@ -138,9 +139,11 @@
                 </tbody>
             </table>
             <p>總計: {{ totalCost }} 元</p>
-
         </div>
-        <div id="seller-ui">
+
+        <!-- 商家界面 -->
+        <!-- 您的商家界面代碼... -->
+        <div id="seller-ui" style="display:none;">
             <h3>商品列表</h3>
             <button @click="loadSellerData">更新</button>
             <table>
@@ -213,19 +216,18 @@
             </div>
         </div>
     </div>
+
     <script>
-        // 用來切換身分
-        document.getElementById('customer').addEventListener('click', () => {
-            document.querySelector('html').setAttribute('data-role', 'customer');
-            document.getElementById('role').innerText = document.querySelector('html').getAttribute('data-role');
+        document.getElementById('customer').addEventListener('click', function() {
+            document.getElementById('role').innerText = '顧客';
             document.getElementById('customer-ui').style.display = 'block';
             document.getElementById('seller-ui').style.display = 'none';
         });
-        document.getElementById('seller').addEventListener('click', () => {
-            document.querySelector('html').setAttribute('data-role', 'seller');
-            document.getElementById('role').innerText = document.querySelector('html').getAttribute('data-role');
-            document.getElementById('seller-ui').style.display = 'block';
+
+        document.getElementById('seller').addEventListener('click', function() {
+            document.getElementById('role').innerText = '賣家';
             document.getElementById('customer-ui').style.display = 'none';
+            document.getElementById('seller-ui').style.display = 'block';
         });
 
         const shoppingCart = Vue.createApp({
@@ -239,9 +241,7 @@
             },
             computed: {
                 totalCost() {
-                    return this.cartItems.reduce((sum, item) => {
-                        return sum + (item.price * item.quantity);
-                    }, 0);
+                    return this.cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
                 }
             },
             methods: {
@@ -261,23 +261,31 @@
                 
 
                 addToCart(productId, price, quantity) {
-                    const that = this;
-                    let url = "../controllers/cart.php?act=add";
-                    // 這裡不再需要使用 getElementById 來獲取數量
-                    data = new FormData();
-                    data.append('productId', productId);
-                    data.append('quantity', quantity); // 直接使用傳遞的 quantity 參數
-                    data.append('price', price);
-                    fetch(url, {
-                        method: 'POST',
-                        body: data
-                    })
-                    .then(function (res) { return res.text(); }) //取得傳回值，轉為文字
-                    .then(function (data) {
-                        console.log(data);
-                        alert(JSON.parse(data)['message']);
-                        that.loadCartData();
-                    })
+                    // 檢查數量是否未定義、空值或小於等於 0
+                    if (quantity === undefined || quantity === null || quantity === '' || quantity <= 0) {
+                        alert("請輸入有效的數量（大於 0）");
+                        return;
+                    }
+
+                    const existingItem = this.cartItems.find(item => item.id === productId);
+                    if (existingItem) {
+                        existingItem.quantity += quantity;
+                    } else {
+                        this.cartItems.push({
+                            id: productId,
+                            name: this.products.find(p => p.id === productId).name,
+                            price: price,
+                            quantity: quantity,
+                        });
+                    }
+                    this.updateCart();
+                },
+                updateQuantity(productId, newQuantity) {
+                    const cartItem = this.cartItems.find(item => item.id === productId);
+                    if (cartItem) {
+                        cartItem.quantity = newQuantity;
+                    }
+                    this.updateCart();
                 },
 
                 loadCartData() {
@@ -294,22 +302,8 @@
                 },
 
                 removeFromCart(itemId) {
-                    // 實作將商品從購物車移除的邏輯
-                    const that = this;
-                    let url = "../controllers/cart.php?act=remove";
-                    const data = new FormData();
-                    data.append('itemId', itemId);
-                    fetch(url, {
-                        method: 'POST',
-                        body: data
-                    })
-                    .then(function (res) { return res.text(); })
-                    .then(function (data) {
-                        console.log(data);
-                        alert(JSON.parse(data)['message']);
-                        // 移除成功後，重新載入購物車資料
-                        that.loadCartData();
-                    });
+                    this.cartItems = this.cartItems.filter(item => item.id !== itemId);
+                    this.updateCart();
                 },
 
                 // 商家角色的方法
