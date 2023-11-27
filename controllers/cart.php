@@ -35,6 +35,15 @@ switch ($action) {
             $response = ['success' => false, 'message' => 'Failed to remove cart item'];
         }
         break;
+        
+    case 'deleteProduct':
+        $productId = $_POST['productId'];
+        if ($cartModel->deleteProduct($productId)) {
+            $response = ['success' => true, 'message' => 'Product deleted successfully'];
+        } else {
+            $response = ['success' => false, 'message' => 'Failed to delete product'];
+        }
+        break;
 
     case 'update':
         $cartItemId = $_POST['cartItemId'];
@@ -45,6 +54,7 @@ switch ($action) {
             $response = ['success' => false, 'message' => 'Failed to update cart item'];
         }
         break;
+        
 
     default:
         $response = ['success' => false, 'message' => 'Invalid action'];
