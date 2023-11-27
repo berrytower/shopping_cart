@@ -136,6 +136,8 @@
                     </tr>
                 </tbody>
             </table>
+            <p>總計: {{ totalCost }} 元</p>
+
         </div>
         <div id="seller-ui">
             <h3>商品列表</h3>
@@ -233,6 +235,13 @@
                     sellerProducts: [],
                     editingProduct: null,
                 };
+            },
+            computed: {
+                totalCost() {
+                    return this.cartItems.reduce((sum, item) => {
+                        return sum + (item.price * item.quantity);
+                    }, 0);
+                }
             },
             methods: {
                 // 客戶角色的方法

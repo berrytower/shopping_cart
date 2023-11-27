@@ -28,7 +28,7 @@ switch ($action) {
         break;
 
     case 'remove':
-        $cartItemId = $_POST['cartItemId'];
+        $cartItemId = $_POST['itemId']; //  itemId
         if ($cartModel->removeCartItem($cartItemId)) {
             $response = ['success' => true, 'message' => 'Cart item removed successfully'];
         } else {

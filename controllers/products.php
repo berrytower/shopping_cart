@@ -40,7 +40,7 @@ elseif ($_GET['act'] === 'DELETE') {
     // 删除商品
     $productId = $_POST['id'];
 
-    // 调用后端方法删除商品
+    // 調用後端方式刪除商品
     $success = $productModel->deleteProduct($productId);
 
     if ($success) {
