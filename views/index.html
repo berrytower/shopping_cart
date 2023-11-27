@@ -1,51 +1,85 @@
 <!DOCTYPE html>
-<html data-role="customer"> <!-- 或者 data-role="seller" -->
+<html data-role="customer" lang="zh-Hant">
 
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script type="text/javascript" src="https://unpkg.com/vue@next"></script>
     <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2, h3 {
+            color: #333;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: #fff; /* 白色背景 */
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 輕微陰影 */
         }
 
-        th,
-        td {
-            padding: 8px;
+        th, td {
+            padding: 12px;
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
 
         tr:hover {
-            background-color: #f5f5f5;
+            background-color: #f5f5f5; /* 懸停時的背景色 */
         }
 
         button {
-            padding: 8px 16px;
-            background-color: #4CAF50;
+            padding: 10px 20px;
+            background-color: #007bff;
             color: white;
             border: none;
+            border-radius: 5px;
             cursor: pointer;
+            font-size: 16px;
         }
 
         button:hover {
-            background-color: #45a049;
+            background-color: #0056b3;
         }
 
-        #customer-ui {
-            display: none;
+        input[type="number"], input[type="text"] {
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
         }
 
-        #seller-ui {
-            display: none;
+        label {
+            font-weight: bold; /* 加粗文字，提高可見性 */
+            display: block; /* 讓label佔據整個行的寬度 */
+        }
+
+        #customer-ui, #seller-ui {
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #app {
+            max-width: 1200px;
+            margin: 0 auto;
         }
     </style>
     <title>Simple Shopping</title>
 </head>
 
 <body>
-    <!--用按鈕切換身分-->
+    <!-- 用按鈕切換身分 -->
     <button id="customer">顧客</button>
     <button id="seller">賣家</button>
     <div id="app">
@@ -54,12 +88,13 @@
             <h3>商品列表</h3>
             <button @click="loadCustomerData">更新</button>
             <table>
+                <!-- 更新以下表單元素的label和title -->
                 <thead>
                     <tr>
-                        <th>名稱</th>
-                        <th>價格</th>
-                        <th>描述</th>
-                        <th>數量</th>
+                        <th><label for="name">名稱</label></th>
+                        <th><label for="price">價格</label></th>
+                        <th><label for="description">描述</label></th>
+                        <th><label for="quantity">數量</label></th>
                         <th>操作</th>
                     </tr>
                 </thead>
@@ -69,7 +104,8 @@
                         <td>{{ product.price }}</td>
                         <td>{{ product.description }}</td>
                         <td>
-                            <input id='quantity' type="number" step="1" min="0">
+                            <input id='quantity' type="number" step="1" min="0" title="請輸入所需數量">
+                        </td>
                         <td>
                             <button @click="addToCart(product.id, product.price)">加入購物車</button>
                         </td>
@@ -78,10 +114,11 @@
             </table>
             <h3>購物車</h3>
             <table>
+                <!-- 更新以下表單元素的label和title -->
                 <thead>
                     <tr>
-                        <th>名稱</th>
-                        <th>價格</th>
+                        <th><label for="cart-name">名稱</label></th>
+                        <th><label for="cart-price">價格</label></th>
                         <th>操作</th>
                     </tr>
                 </thead>
@@ -143,22 +180,23 @@
                     </tr>
                 </tbody>
             </table>
+
             <div id="editui" v-if="editingProduct">
                 <h3>編輯商品</h3>
                 <table>
                     <thead>
                         <tr>
-                            <th>名稱</th>
-                            <th>價格</th>
-                            <th>描述</th>
+                            <th><label for="edid_name">名稱</label></th>
+                            <th><label for="edid_price">價格</label></th>
+                            <th><label for="edid_description">描述</label></th>
                             <th>操作</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td><input type="text" id="edid_name" :value="editingProduct.name"></td>
-                            <td><input type="number" id="edid_price" step="1" min="0" :value="editingProduct.price"></td>
-                            <td><input type="text" id="edid_description" :value="editingProduct.description"></td>
+                            <td><input type="text" id="edid_name" :value="editingProduct.name" title="請輸入商品名稱"></td>
+                            <td><input type="number" id="edid_price" step="1" min="0" :value="editingProduct.price" title="請輸入商品價格"></td>
+                            <td><input type="text" id="edid_description" :value="editingProduct.description" title="請輸入商品描述"></td>
                             <td>
                                 <button @click="editProduct(editingProduct.id)">編輯</button>
                             </td>
@@ -224,12 +262,39 @@
                             alert(JSON.parse(data)['message']);
                         })
                 },
+
+
                 loadCartData() {
                     // 實作載入購物車資料的邏輯
+                    const that = this;
+                    let url = "../controllers/cart.php?act=list";
+                    fetch(url)
+                        .then(function (res) { return res.text(); })
+                        .then(function (data) {
+                            console.log(data);
+                            that.cartItems = JSON.parse(data);
+                        });
                 },
+
                 removeFromCart(itemId) {
                     // 實作將商品從購物車移除的邏輯
+                    const that = this;
+                    let url = "../controllers/cart.php?act=remove";
+                    const data = new FormData();
+                    data.append('itemId', itemId);
+                    fetch(url, {
+                        method: 'POST',
+                        body: data
+                    })
+                    .then(function (res) { return res.text(); })
+                    .then(function (data) {
+                        console.log(data);
+                        alert(JSON.parse(data)['message']);
+                        // 移除成功後，重新載入購物車資料
+                        that.loadCartData();
+                    });
                 },
+
                 // 商家角色的方法
                 loadSellerData() {
                     const that = this;
