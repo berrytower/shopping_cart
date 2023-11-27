@@ -57,7 +57,7 @@ elseif ($_GET['act'] === 'DELETE') {
     header('Content-Type: application/json');
     echo json_encode($response);
 }
-elseif ($_GET['act'] === 'edit') 
+else if ($_GET['act'] === 'edit') 
 {
     // 編輯商品
     $productId = $_POST['id'];
@@ -71,6 +71,8 @@ elseif ($_GET['act'] === 'edit')
         'success' => $success,
         'message' => $success ? 'Product updated successfully' : 'Failed to update product'
     ];
+    header('Content-Type: application/json');
+    echo json_encode($response);
 } 
 else {
     $response = [
