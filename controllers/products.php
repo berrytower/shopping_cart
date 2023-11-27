@@ -57,3 +57,29 @@ elseif ($_GET['act'] === 'DELETE') {
     header('Content-Type: application/json');
     echo json_encode($response);
 }
+elseif ($_GET['act'] === 'edit') 
+{
+    // 編輯商品
+    $productId = $_POST['id'];
+    $name = $_POST['name'];
+    $description = $_POST['description'];
+    $price = $_POST['price'];
+
+    $success = $productModel->updateProduct($productId, $name, $description, $price);
+
+    $response = [
+        'success' => $success,
+        'message' => $success ? 'Product updated successfully' : 'Failed to update product'
+    ];
+} 
+else {
+    $response = [
+        'success' => false,
+        'message' => 'Invalid action specified'
+    ];
+
+    header('Content-Type: application/json');
+    echo json_encode($response);
+}
+
+

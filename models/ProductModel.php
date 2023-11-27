@@ -31,7 +31,7 @@ class ProductModel {
         
     }
     public function updateProduct($id, $name, $description, $price) {
-        $sql = "UPDATE products SET name=?, description=?, price=? WHERE id=?";
+        $sql = "update products SET name=?, description=?, price=? WHERE id=?";
         $stmt = mysqli_prepare($this->db, $sql);
         mysqli_stmt_bind_param($stmt, 'ssdi', $name, $description, $price, $id);
         return mysqli_stmt_execute($stmt);

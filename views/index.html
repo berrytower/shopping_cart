@@ -114,35 +114,37 @@
                         <td>{{ product.price }}</td>
                         <td>{{ product.description }}</td>
                         <td>
-                            <button @click="editProduct(product.id)">編輯</button>
+                            <button @click="editui(product)">編輯</button>
                             <button @click="deleteProduct(product.id)">刪除</button>
                         </td>
                     </tr>
                 </tbody>
             </table>
-            <h3 v-if="editingProductId">編輯商品</h3>
-            <table v-if="editingProductId">
-
-                <thead>
-                    <tr>
-                        <th>名稱</th>
-                        <th>價格</th>
-                        <th>描述</th>
-                        <th>操作</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><input v-model="editedProduct.name" type="text"></td>
-                        <td><input v-model="editedProduct.price" type="number" step="1" min="0"></td>
-                        <td><input v-model="editedProduct.description" type="text"></td>
-                        <td>
-                            <button @click="saveEditedProduct">保存</button>
-                            <button @click="cancelEdit">取消</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div v-if="editingProductId">
+                <h3>編輯商品</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>名稱</th>
+                            <th>價格</th>
+                            <th>描述</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" id="edid_name"></td>
+                            <td>
+                                <input type="number" id="edid_price" step="1" min="0">
+                            </td>
+                            <td><input type="text" id="edid_description"></td>
+                            <td>
+                                <button @click="editProduct(editingProductId)">編輯</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             <h3>新增商品</h3>
             <table>
                 <thead>
@@ -189,6 +191,7 @@
                     products: [],
                     cartItems: [],
                     sellerProducts: [],
+                    editingProductId: null,
                 };
             },
             methods: {
@@ -258,13 +261,23 @@
                         })
 
                 },
+                editui(product) {
+                    const that = this;
+                    that.editingProductId = product.id;
+                    console.log(product);
+                    // document.getElementById('edid_name').value = product.name;
+                    // document.getElementById('edid_description').value = product.description;
+                    // document.getElementById('edid_price').value = product.price;
+
+                },
                 editProduct(productId) {
                     const that = this;
-                    let url = "../controllers/products.php?act=";
+                    let url = "../controllers/products.php?act=edit";
                     let data = new FormData();
-                    data.append('name', document.getElementById('name').value);
-                    data.append('description', document.getElementById('description').value);
-                    data.append('price', document.getElementById('price').value);
+                    data.append('id', productId);
+                    data.append('name', document.getElementById('edid_name').value);
+                    data.append('description', document.getElementById('edid_description').value);
+                    data.append('price', document.getElementById('edid_price').value);
 
                     fetch(url, {
                         method: 'POST',
@@ -273,6 +286,7 @@
                         .then(function (res) { return res.text(); }) //取得傳回值，轉為文字
                         .then(function (data) {
                             alert(JSON.parse(data)['message']);
+                            that.loadSellerData();
                         })
                 },
                 deleteProduct(productId) {
@@ -288,6 +302,7 @@
                         .then(function (data) {
                             console.log(data)
                             alert(JSON.parse(data)['message']);
+                            that.loadSellerData();
                         })
                 },
 
