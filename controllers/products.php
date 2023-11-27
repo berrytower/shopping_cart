@@ -36,4 +36,24 @@ if ($_GET['act'] == 'add') {
     header('Content-Type: application/json');
     echo json_encode($products);
 }
+elseif ($_GET['act'] === 'DELETE') {
+    // 删除商品
+    $productId = $_POST['id'];
 
+    // 调用后端方法删除商品
+    $success = $productModel->deleteProduct($productId);
+
+    if ($success) {
+        $response = [
+            'success' => true,
+            'message' => 'Product deleted successfully',
+        ];
+    } else {
+        $response = [
+            'success' => false,
+            'message' => 'Failed to delete product',
+        ];
+    }
+    header('Content-Type: application/json');
+    echo json_encode($response);
+}

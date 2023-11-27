@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html data-role="customer"> <!-- 或者 data-role="seller" -->
+
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <script type="text/javascript" src="https://unpkg.com/vue@next"></script>
     <style>
-    
         table {
             width: 100%;
             border-collapse: collapse;
         }
 
-        th, td {
+        th,
+        td {
             padding: 8px;
             text-align: left;
             border-bottom: 1px solid #ddd;
@@ -35,13 +36,14 @@
         #customer-ui {
             display: none;
         }
+
         #seller-ui {
             display: none;
         }
-
     </style>
     <title>Simple Shopping</title>
 </head>
+
 <body>
     <!--用按鈕切換身分-->
     <button id="customer">顧客</button>
@@ -118,6 +120,29 @@
                     </tr>
                 </tbody>
             </table>
+            <h3 v-if="editingProductId">編輯商品</h3>
+            <table v-if="editingProductId">
+
+                <thead>
+                    <tr>
+                        <th>名稱</th>
+                        <th>價格</th>
+                        <th>描述</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input v-model="editedProduct.name" type="text"></td>
+                        <td><input v-model="editedProduct.price" type="number" step="1" min="0"></td>
+                        <td><input v-model="editedProduct.description" type="text"></td>
+                        <td>
+                            <button @click="saveEditedProduct">保存</button>
+                            <button @click="cancelEdit">取消</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
             <h3>新增商品</h3>
             <table>
                 <thead>
@@ -170,33 +195,33 @@
                 // 客戶角色的方法
                 loadCustomerData() {
                     // 實作載入商品列表的邏輯
-                    const that=this;
-                    let url="../controllers/products.php?act=list";
+                    const that = this;
+                    let url = "../controllers/products.php?act=list";
                     fetch(url)
-                    .then(function(res){return res.text(); }) //取得傳回值，轉為文字
-                    .then(function(data){
-                        console.log(data);
-                        console.log(JSON.parse(data));
-                        that.products=JSON.parse(data);
-                    })
+                        .then(function (res) { return res.text(); }) //取得傳回值，轉為文字
+                        .then(function (data) {
+                            console.log(data);
+                            console.log(JSON.parse(data));
+                            that.products = JSON.parse(data);
+                        })
                 },
                 addToCart(productId, price) {
-                    const that=this;
-                    let url="../controllers/cart.php?act=add";
-                    quantity=document.getElementById('quantity').value;
-                    data=new FormData();
-                    data.append('productId',productId);
-                    data.append('quantity',quantity);
-                    data.append('price',price);
-                    fetch(url,{
-                        method:'POST',
-                        body:data
+                    const that = this;
+                    let url = "../controllers/cart.php?act=add";
+                    quantity = document.getElementById('quantity').value;
+                    data = new FormData();
+                    data.append('productId', productId);
+                    data.append('quantity', quantity);
+                    data.append('price', price);
+                    fetch(url, {
+                        method: 'POST',
+                        body: data
                     })
-                    .then(function(res){return res.text(); }) //取得傳回值，轉為文字
-                    .then(function(data){ 
-                        console.log(data);
-                        alert(JSON.parse(data)['message']);     
-                    })
+                        .then(function (res) { return res.text(); }) //取得傳回值，轉為文字
+                        .then(function (data) {
+                            console.log(data);
+                            alert(JSON.parse(data)['message']);
+                        })
                 },
                 loadCartData() {
                     // 實作載入購物車資料的邏輯
@@ -206,38 +231,64 @@
                 },
                 // 商家角色的方法
                 loadSellerData() {
-                    const that=this;
-                    let url="../controllers/products.php?act=list";
+                    const that = this;
+                    let url = "../controllers/products.php?act=list";
                     fetch(url)
-                    .then(function(res){return res.text(); }) //取得傳回值，轉為文字
-                    .then(function(data){
-                        console.log(data);
-                        that.sellerProducts=JSON.parse(data);
-                    })
+                        .then(function (res) { return res.text(); }) //取得傳回值，轉為文字
+                        .then(function (data) {
+                            console.log(data);
+                            that.sellerProducts = JSON.parse(data);
+                        })
                 },
                 addProduct() {
-                    const that=this;
-                    let url="../controllers/products.php?act=add";
-                    let data=new FormData();
-                    data.append('name',document.getElementById('name').value);
-                    data.append('description',document.getElementById('description').value);
-                    data.append('price',document.getElementById('price').value);
+                    const that = this;
+                    let url = "../controllers/products.php?act=add";
+                    let data = new FormData();
+                    data.append('name', document.getElementById('name').value);
+                    data.append('description', document.getElementById('description').value);
+                    data.append('price', document.getElementById('price').value);
 
-                    fetch(url,{
-                        method:'POST',
-                        body:data
+                    fetch(url, {
+                        method: 'POST',
+                        body: data
                     })
-                    .then(function(res){return res.text(); }) //取得傳回值，轉為文字
-                    .then(function(data){ 
-                        alert(JSON.parse(data)['message']);     
-                    })
-                    
+                        .then(function (res) { return res.text(); }) //取得傳回值，轉為文字
+                        .then(function (data) {
+                            alert(JSON.parse(data)['message']);
+                        })
+
                 },
                 editProduct(productId) {
-                    // 實作編輯商品的邏輯
+                    const that = this;
+                    let url = "../controllers/products.php?act=";
+                    let data = new FormData();
+                    data.append('name', document.getElementById('name').value);
+                    data.append('description', document.getElementById('description').value);
+                    data.append('price', document.getElementById('price').value);
+
+                    fetch(url, {
+                        method: 'POST',
+                        body: data
+                    })
+                        .then(function (res) { return res.text(); }) //取得傳回值，轉為文字
+                        .then(function (data) {
+                            alert(JSON.parse(data)['message']);
+                        })
                 },
                 deleteProduct(productId) {
-                    // 實作刪除商品的邏輯
+                    const that = this;
+                    let url = "../controllers/products.php?act=DELETE";
+                    let data = new FormData();
+                    data.append('id', productId);
+                    fetch(url, {
+                        method: 'POST',
+                        body: data
+                    })
+                        .then(function (res) { return res.text(); }) //取得傳回值，轉為文字
+                        .then(function (data) {
+                            console.log(data)
+                            alert(JSON.parse(data)['message']);
+                        })
                 },
 
             },
@@ -254,4 +305,5 @@
         shoppingCart.mount('#app');
     </script>
 </body>
+
 </html>
