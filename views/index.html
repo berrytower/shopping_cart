@@ -261,31 +261,33 @@
                 
 
                 addToCart(productId, price, quantity) {
+                    const that = this;
                     // 檢查數量是否未定義、空值或小於等於 0
                     if (quantity === undefined || quantity === null || quantity === '' || quantity <= 0) {
                         alert("請輸入有效的數量（大於 0）");
                         return;
                     }
 
-                    const existingItem = this.cartItems.find(item => item.id === productId);
+                    const existingItem = that.cartItems.find(item => item.id === productId);
                     if (existingItem) {
                         existingItem.quantity += quantity;
                     } else {
-                        this.cartItems.push({
+                        that.cartItems.push({
                             id: productId,
                             name: this.products.find(p => p.id === productId).name,
                             price: price,
                             quantity: quantity,
                         });
                     }
-                    this.updateCart();
+                    that.updateCart();
                 },
                 updateQuantity(productId, newQuantity) {
-                    const cartItem = this.cartItems.find(item => item.id === productId);
+                    const that = this;
+                    const cartItem = that.cartItems.find(item => item.id === productId);
                     if (cartItem) {
                         cartItem.quantity = newQuantity;
                     }
-                    this.updateCart();
+                    that.updateCart();
                 },
 
                 loadCartData() {
@@ -302,8 +304,9 @@
                 },
 
                 removeFromCart(itemId) {
-                    this.cartItems = this.cartItems.filter(item => item.id !== itemId);
-                    this.updateCart();
+                    const that = this;
+                    that.cartItems = that.cartItems.filter(item => item.id !== itemId);
+                    that.updateCart();
                 },
 
                 // 商家角色的方法
