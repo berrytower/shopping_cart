@@ -20,12 +20,22 @@ SET time_zone = "+00:00";
 --
 -- Database: `shopping_cart`
 
+-- 廠商表
+CREATE TABLE vendors (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(20) NOT NULL -- 'vendor'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
 -- 使用者表
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    role VARCHAR(20) NOT NULL -- 'customer' 或 'seller'
+    role VARCHAR(20) NOT NULL, -- 'customer' 或 'seller' 或 'logistics'
+    vendor_id INT,
+    FOREIGN KEY (vendor_id) REFERENCES vendors(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- 商品表
@@ -39,13 +49,47 @@ CREATE TABLE products (
 -- 購物車表
 CREATE TABLE shopping_cart (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
     product_id INT,
     quantity INT,
-    FOREIGN KEY (product_id) REFERENCES products(id)
+    vendor_id INT,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (product_id) REFERENCES products(id),
+    FOREIGN KEY (vendor_id) REFERENCES vendors(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- 訂單表
+CREATE TABLE orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    status VARCHAR(20) NOT NULL, -- '未處理訂單' 或 '處理中訂單' 或 '寄送中訂單' 或 '已送達'
+    vendor_id INT,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (vendor_id) REFERENCES vendors(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- 訂單商品表
+CREATE TABLE order_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT,
+    product_id INT,
+    quantity INT,
+    vendor_id INT,
+    FOREIGN KEY (order_id) REFERENCES orders(id),
+    FOREIGN KEY (product_id) REFERENCES products(id),
+    FOREIGN KEY (vendor_id) REFERENCES vendors(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- 訂單評價表
+CREATE TABLE order_reviews (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    reviewer_id INT,
+    order_id INT,
+    rating INT NOT NULL, -- 1-5顆星
+    vendor_id INT,
+    FOREIGN KEY (reviewer_id) REFERENCES users(id),
+    FOREIGN KEY (order_id) REFERENCES orders(id),
+    FOREIGN KEY (vendor_id) REFERENCES vendors(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

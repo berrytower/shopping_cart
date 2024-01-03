@@ -7,9 +7,12 @@ class ProductModel {
         $this->db = $db;
     }
 
-    public function getAllProducts() {
-        $sql = "select * from products";
-        $result = mysqli_query($this->db, $sql);
+    public function getProducts($userId) {
+        $sql = "select * from products where owner_id = ?";
+        $stmt = mysqli_prepare($this->db, $sql);
+        mysqli_stmt_bind_param($stmt, 'i', $userId);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
         $products = [];
         while ($row = mysqli_fetch_assoc($result)) {
             $products[] = $row;
@@ -17,12 +20,12 @@ class ProductModel {
         return $products;
     }
 
-    public function addProduct($name, $description, $price) {
+    public function addProduct($name, $description, $price, $userId) {
         
 
-        $sql = "insert into products (name, description, price) values (?, ?, ?)";
+        $sql = "insert into products (name, description, price, owner_id) values (?, ?, ?, ?)";
         $stmt = mysqli_prepare($this->db, $sql);
-        mysqli_stmt_bind_param($stmt, 'ssd', $name, $description, $price);
+        mysqli_stmt_bind_param($stmt, 'ssdi', $name, $description, $price, $userId);
         if (mysqli_stmt_execute($stmt)) {
             return mysqli_insert_id($this->db);
         } else {

@@ -9,44 +9,31 @@ switch ($action) {
         $productId = $_POST['productId'];
         $quantity = $_POST['quantity'];
         $price = $_POST['price'];
-
-        if ($quantity <= 0) {
-            $response = ['success' => false, 'message' => 'Quantity must be greater than 0'];
+        $userId = $_POST['userId'];
+        
+        if ($cartModel->addCartItem($productId, $quantity, $price, $userId)) {
+            $response = ['success' => true, 'message' => 'Product added to cart successfully'];
         } else {
-            $cartItemId = $cartModel->addCartItem($productId, $quantity);
-            if ($cartItemId) {
-                $response = ['success' => true, 'message' => 'Cart item added successfully', 'cartItemId' => $cartItemId];
-            } else {
-                $response = ['success' => false, 'message' => 'Failed to add cart item'];
-            }
+            $response = ['success' => false, 'message' => 'Failed to add product to cart'];
         }
         break;
 
     case 'list':
-        $cartItems = $cartModel->getCartItems();
+        $userId = $_POST['userId'];
+        $cartItems = $cartModel->getCartItems($userId);
         $response = ['success' => true, 'cartItems' => $cartItems];
         break;
 
     case 'remove':
-        $cartItemId = $_POST['itemId']; //  itemId
-        if ($cartModel->removeCartItem($cartItemId)) {
-            $response = ['success' => true, 'message' => 'Cart item removed successfully'];
-        } else {
-            $response = ['success' => false, 'message' => 'Failed to remove cart item'];
-        }
-        break;
-
-    case 'update':
-        $cartItemId = $_POST['cartItemId'];
-        $quantity = $_POST['quantity'];
-        if ($cartModel->updateCartItem($cartItemId, $quantity)) {
-            $response = ['success' => true, 'message' => 'Cart item updated successfully'];
-        } else {
-            $response = ['success' => false, 'message' => 'Failed to update cart item'];
-        }
-        break;
+    $cartItemId = $_POST['itemId']; //  itemId
+    $userId = $_POST['userId'];
+    if ($cartModel->removeCartItem($cartItemId)) {
+        $response = ['success' => true, 'message' => 'Cart item removed successfully'];
+    } else {
+        $response = ['success' => false, 'message' => 'Failed to remove cart item'];
+    }
+    break;
         
-
     default:
         $response = ['success' => false, 'message' => 'Invalid action'];
         break;

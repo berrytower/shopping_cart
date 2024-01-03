@@ -9,10 +9,11 @@ if ($_GET['act'] == 'add') {
         'name' => $_POST['name'],
         'description' => $_POST['description'],
         'price' => $_POST['price'],
+        'userId' => $_POST['userId']
     ];
 
     
-    $productId = $productModel->addProduct($product['name'], $product['description'], $product['price']);
+    $productId = $productModel->addProduct($product['name'], $product['description'], $product['price'], $product['userId']);
 
     if ($productId) {
         $response = [
@@ -31,12 +32,13 @@ if ($_GET['act'] == 'add') {
     echo json_encode($response);
 
 } else if ($_GET['act'] == 'list') {
-    $products = $productModel->getAllProducts();
+    // $_POST['userId'] 為操做者的 id
+    $products = $productModel->getProducts($_POST['userId']);
 
     header('Content-Type: application/json');
     echo json_encode($products);
 }
-elseif ($_GET['act'] === 'DELETE') {
+elseif ($_GET['act'] === 'del') {
     // 删除商品
     $productId = $_POST['id'];
 
