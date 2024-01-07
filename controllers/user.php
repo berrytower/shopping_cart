@@ -10,9 +10,9 @@ switch ($action) {
     case 'login':
         $username = $_POST['username'];
         $password = $_POST['password'];
-
         $user = $UserModel->getUser($username);
-        if ($user && password_verify($password, $user['password'])) {
+        
+        if ($user && $user['password'] === $password) {
             $response = ['success' => true, 'message' => 'Login successfully', 'userId' => $user['id']];
         } else {
             $response = ['success' => false, 'message' => 'Login failed'];
@@ -22,7 +22,8 @@ switch ($action) {
     //註冊
     case 'register':
         $username = $_POST['username'];
-        $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+        //$password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+        $password = $_POST['password'];
         $role = $_POST['role'];
         $role_map = ['客戶' => 0, '賣家' => 1, '物流' => 2];
         //echo "register";
