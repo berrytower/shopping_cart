@@ -30,7 +30,18 @@ switch ($action) {
             $response = ['success' => false, 'message' => 'Register failed'];
         }
         break;
+    case 'review':
+        // 評價
+        $userId = $_POST['userId'];
+        $sellerId = $_POST['sellerId'];
+        $rating = $_POST['rating'];
 
+        $result = $UserModel->addReview($userId, $sellerId, $rating);
+        if ($result) {
+            $response = ['success' => true, 'message' => 'Review successfully'];
+        } else {
+            $response = ['success' => false, 'message' => 'Review failed'];
+        }
 }
 header('Content-Type: application/json');
 echo json_encode($response);

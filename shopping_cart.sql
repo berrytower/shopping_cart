@@ -81,15 +81,15 @@ CREATE TABLE order_items (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- 訂單評價表
-CREATE TABLE order_reviews (
+CREATE TABLE reviews (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    reviewer_id INT,
-    order_id INT,
+    reviewerID INT,
+    sellerID INT,
     rating INT NOT NULL, -- 1-5顆星
-    vendor_id INT,
-    FOREIGN KEY (reviewer_id) REFERENCES users(id),
-    FOREIGN KEY (order_id) REFERENCES orders(id),
-    FOREIGN KEY (vendor_id) REFERENCES vendors(id)
+   
+    FOREIGN KEY (reviewerID) REFERENCES users(id),
+    FOREIGN KEY (sellerID) REFERENCES vendors(id)
+    PRIMARY KEY (reviewerID, sellerID)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 COMMIT;
