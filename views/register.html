@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>註冊 - Simple Shopping</title>
-    <link rel="stylesheet" href="styles.css">
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -87,16 +86,17 @@
     <script>
         document.getElementById('registerForm').addEventListener('submit', function(event) {
             event.preventDefault();
-            var formData = new FormData(this);
-            fetch(this.action, {
+            const that = this;
+            var formData = new FormData(that);
+         
+            fetch(that.action, {
                 method: 'POST',
                 body: formData
             }).then(response => response.json())
               .then(data => {
+                alert(data.message)
                   if (data.success) {
                       window.location.href = data.redirect; // 注册成功，跳转到登录页面
-                  } else {
-                      alert(data.message); // 显示错误信息
                   }
               });
         });

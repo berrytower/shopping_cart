@@ -1,4 +1,5 @@
 <?php
+require('../dbconfig.php');
 class UserModel {
     private $db;
     

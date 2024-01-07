@@ -1,13 +1,6 @@
 <?php
 require_once('../models/UserModel.php');
 
-// 初始化SQL連接
-$db = new mysqli('localhost', 'username', 'password', 'users');
-if ($db->connect_error) {
-    die("Connection failed: " . $db->connect_error);
-}
-
-
 $UserModel = new UserModel($db);
 
 $action = $_GET['act'] ?? '';
@@ -31,11 +24,13 @@ switch ($action) {
         $username = $_POST['username'];
         $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
         $role = $_POST['role'];
-    
+        $role_map = ['客戶' => 0, '賣家' => 1, '物流' => 2];
+        //echo "register";
+
         if ($UserModel->getUser($username)) {
             $response = ['success' => false, 'message' => 'Username already exists'];
         } else {
-            $result = $UserModel->addUser($username, $password, $role);
+            $result = $UserModel->addUser($username, $password, $role_map[$role]);
             if ($result) {
                 $response = ['success' => true, 'message' => 'Register successfully', 'redirect' => 'login.html'];
             } else {
