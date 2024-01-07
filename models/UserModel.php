@@ -8,13 +8,26 @@ class UserModel
     }
     public function getUser($username)
     {
-        // 根據 username 取得使用者資料
-        return "user";
+        // 取得使用者資料
+        $sql = "select * from users where username = ?";
+        $stmt = mysqli_prepare($this->db, $sql);
+        mysqli_stmt_bind_param($stmt, 's', $username);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        return mysqli_fetch_assoc($result);
     }
     public function addUser($username, $password, $role)
     {
         // 新增使用者，要檢查 username 是否已經存在
-        return "result";
+        $sql = "insert into users (username, password, role) values (?, ?, ?)";
+        $stmt = mysqli_prepare($this->db, $sql);
+        mysqli_stmt_bind_param($stmt, 'ssi', $username, $password, $role);
+        if (mysqli_stmt_execute($stmt)) {
+            return mysqli_insert_id($this->db);
+        } else {
+            return false;
+        }
+        
     }
     public function addReview($userId, $sellerId, $rating)
     {

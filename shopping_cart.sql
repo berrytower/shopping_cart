@@ -20,30 +20,22 @@ SET time_zone = "+00:00";
 --
 -- Database: `shopping_cart`
 
--- 廠商表
-CREATE TABLE vendors (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(255) NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    role VARCHAR(20) NOT NULL -- 'vendor'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
 -- 使用者表
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    role VARCHAR(20) NOT NULL, -- 'customer' 或 'seller' 或 'logistics'
-    vendor_id INT,
-    FOREIGN KEY (vendor_id) REFERENCES vendors(id)
+    role INT NOT NULL -- 0: '客戶', 1: '商家', 2: '物流
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- 商品表
 CREATE TABLE products (
     id INT PRIMARY KEY AUTO_INCREMENT,
+    owner_id INT,
     name VARCHAR(255) NOT NULL,
     description TEXT,
     price DECIMAL(10, 2) NOT NULL
+    FOREIGN KEY (owner_id) REFERENCES users(id),
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- 購物車表
@@ -52,10 +44,8 @@ CREATE TABLE shopping_cart (
     user_id INT,
     product_id INT,
     quantity INT,
-    vendor_id INT,
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (product_id) REFERENCES products(id),
-    FOREIGN KEY (vendor_id) REFERENCES vendors(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- 訂單表
@@ -63,32 +53,26 @@ CREATE TABLE orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
     status VARCHAR(20) NOT NULL, -- '未處理訂單' 或 '處理中訂單' 或 '寄送中訂單' 或 '已送達'
-    vendor_id INT,
     FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (vendor_id) REFERENCES vendors(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- 訂單商品表
 CREATE TABLE order_items (
-    id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT,
     product_id INT,
     quantity INT,
-    vendor_id INT,
     FOREIGN KEY (order_id) REFERENCES orders(id),
     FOREIGN KEY (product_id) REFERENCES products(id),
-    FOREIGN KEY (vendor_id) REFERENCES vendors(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- 訂單評價表
 CREATE TABLE reviews (
-    id INT AUTO_INCREMENT PRIMARY KEY,
     reviewerID INT,
     sellerID INT,
     rating INT NOT NULL, -- 1-5顆星
    
     FOREIGN KEY (reviewerID) REFERENCES users(id),
-    FOREIGN KEY (sellerID) REFERENCES vendors(id)
+    FOREIGN KEY (sellerID) REFERENCES users(id),
     PRIMARY KEY (reviewerID, sellerID)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
