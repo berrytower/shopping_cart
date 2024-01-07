@@ -25,7 +25,7 @@ CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    role INT NOT NULL -- 0: '客戶', 1: '商家', 2: '物流
+    role INT NOT NULL -- 0: '客戶', 1: '商家', 2: '物流'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- 商品表
@@ -34,8 +34,8 @@ CREATE TABLE products (
     owner_id INT,
     name VARCHAR(255) NOT NULL,
     description TEXT,
-    price DECIMAL(10, 2) NOT NULL
-    FOREIGN KEY (owner_id) REFERENCES users(id),
+    price DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (owner_id) REFERENCES users(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- 購物車表
@@ -45,7 +45,7 @@ CREATE TABLE shopping_cart (
     product_id INT,
     quantity INT,
     FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (product_id) REFERENCES products(id),
+    FOREIGN KEY (product_id) REFERENCES products(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- 訂單表
@@ -53,8 +53,9 @@ CREATE TABLE orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
     status VARCHAR(20) NOT NULL, -- '未處理訂單' 或 '處理中訂單' 或 '寄送中訂單' 或 '已送達'
-    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
 
 -- 訂單商品表
 CREATE TABLE order_items (
@@ -62,7 +63,7 @@ CREATE TABLE order_items (
     product_id INT,
     quantity INT,
     FOREIGN KEY (order_id) REFERENCES orders(id),
-    FOREIGN KEY (product_id) REFERENCES products(id),
+    FOREIGN KEY (product_id) REFERENCES products(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- 訂單評價表
