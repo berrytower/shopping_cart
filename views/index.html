@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script type="text/javascript" src="https://unpkg.com/vue@latest"></script>
-    
+
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -14,7 +14,8 @@
             padding: 20px;
         }
 
-        h2, h3 {
+        h2,
+        h3 {
             color: #333;
         }
 
@@ -22,19 +23,23 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
-            background-color: #fff; /* 白色背景 */
+            background-color: #fff;
+            /* 白色背景 */
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 輕微陰影 */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            /* 輕微陰影 */
         }
 
-        th, td {
+        th,
+        td {
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
 
         tr:hover {
-            background-color: #f5f5f5; /* 懸停時的背景色 */
+            background-color: #f5f5f5;
+            /* 懸停時的背景色 */
         }
 
         button {
@@ -51,7 +56,8 @@
             background-color: #0056b3;
         }
 
-        input[type="number"], input[type="text"] {
+        input[type="number"],
+        input[type="text"] {
             padding: 10px;
             margin-right: 10px;
             border: 1px solid #ddd;
@@ -60,11 +66,14 @@
         }
 
         label {
-            font-weight: bold; /* 加粗文字，提高可見性 */
-            display: block; /* 讓label佔據整個行的寬度 */
+            font-weight: bold;
+            /* 加粗文字，提高可見性 */
+            display: block;
+            /* 讓label佔據整個行的寬度 */
         }
 
-        #customer-ui, #seller-ui {
+        #customer-ui,
+        #seller-ui {
             padding: 20px;
             background-color: white;
             border-radius: 8px;
@@ -74,6 +83,13 @@
         #app {
             max-width: 1200px;
             margin: 0 auto;
+        }
+
+        #logistics-ui {
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
     </style>
     <title>Simple Shopping</title>
@@ -130,7 +146,8 @@
                         <td>{{ item.name }}</td>
                         <td>{{ item.price }}</td>
                         <td>
-                            <input type="number" v-model="item.quantity" @change="updateQuantity(item.id, item.quantity)" min="0">
+                            <input type="number" v-model="item.quantity"
+                                @change="updateQuantity(item.id, item.quantity)" min="0">
                         </td>
                         <td>{{ item.price * item.quantity }}</td>
                         <td>
@@ -140,6 +157,13 @@
                 </tbody>
             </table>
             <p>總計: {{ totalCost }} 元</p>
+            <h3>物流選項</h3>
+            <label for="shippingOptions">選擇物流：</label>
+            <select id="shippingOptions" v-model="selectedShippingOption">
+                <option value="standard">標準運送</option>
+                <option value="express">快遞運送</option>
+            </select>
+            <button @click="completePurchase">完成購物</button>
         </div>
 
         <!-- 商家界面 -->
@@ -206,8 +230,10 @@
                     <tbody>
                         <tr>
                             <td><input type="text" id="edid_name" :value="editingProduct.name" title="請輸入商品名稱"></td>
-                            <td><input type="number" id="edid_price" step="1" min="0" :value="editingProduct.price" title="請輸入商品價格"></td>
-                            <td><input type="text" id="edid_description" :value="editingProduct.description" title="請輸入商品描述"></td>
+                            <td><input type="number" id="edid_price" step="1" min="0" :value="editingProduct.price"
+                                    title="請輸入商品價格"></td>
+                            <td><input type="text" id="edid_description" :value="editingProduct.description"
+                                    title="請輸入商品描述"></td>
                             <td>
                                 <button @click="editProduct(editingProduct.id)">更新</button>
                             </td>
@@ -218,14 +244,16 @@
         </div>
     </div>
 
+
+
     <script>
-        document.getElementById('customer').addEventListener('click', function() {
+        document.getElementById('customer').addEventListener('click', function () {
             document.getElementById('role').innerText = '顧客';
             document.getElementById('customer-ui').style.display = 'block';
             document.getElementById('seller-ui').style.display = 'none';
         });
 
-        document.getElementById('seller').addEventListener('click', function() {
+        document.getElementById('seller').addEventListener('click', function () {
             document.getElementById('role').innerText = '賣家';
             document.getElementById('customer-ui').style.display = 'none';
             document.getElementById('seller-ui').style.display = 'block';
@@ -237,6 +265,7 @@
                     products: [],
                     cartItems: [],
                     sellerProducts: [],
+                    shippingOrder: [],
                     editingProduct: null,
                 };
             },
@@ -259,7 +288,7 @@
                             that.products = JSON.parse(data);
                         })
                 },
-                
+
 
                 addToCart(productId, price, quantity) {
                     const that = this;
@@ -342,7 +371,7 @@
                 },
                 editui(product) {
                     const that = this;
-                    that.editingProduct = product;    
+                    that.editingProduct = product;
 
                 },
                 editProduct(productId) {
@@ -358,13 +387,13 @@
                         method: 'POST',
                         body: data
                     })
-                    .then(function (res) { return res.text(); }) //取得傳回值，轉為文字
-                    .then(function (data) {
-                        alert(JSON.parse(data)['message']);
-                        that.loadSellerData();
-                    })
+                        .then(function (res) { return res.text(); }) //取得傳回值，轉為文字
+                        .then(function (data) {
+                            alert(JSON.parse(data)['message']);
+                            that.loadSellerData();
+                        })
                     that.editingProduct = null;
-                    
+
                 },
                 deleteProduct(productId) {
                     const that = this;
