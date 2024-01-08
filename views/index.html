@@ -428,7 +428,7 @@
                 },
                 deleteProduct(productId) {
                     const that = this;
-                    let url = "../controllers/products.php?act=del";
+                    let url = "../controllers/products.php?act=DELETE";
                     let data = new FormData();
                     data.append('id', productId);
                     fetch(url, {
