@@ -177,6 +177,7 @@
                         <th>名稱</th>
                         <th>價格</th>
                         <th>描述</th>
+                        <th>使用者</th>
                         <th>操作</th>
                     </tr>
                 </thead>
@@ -185,6 +186,7 @@
                         <td>{{ product.name }}</td>
                         <td>{{ product.price }}</td>
                         <td>{{ product.description }}</td>
+                        <td>{{ product.userId}}</td>
                         <td>
                             <button @click="editui(product)">編輯</button>
                             <button @click="deleteProduct(product.id)">刪除</button>
@@ -199,16 +201,17 @@
                         <th>名稱</th>
                         <th>價格</th>
                         <th>描述</th>
+                        <th>使用者</th>
                         <th>操作</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td><input type="text" id="name"></td>
-                        <td>
-                            <input type="number" id="price" step="1" min="0">
+                        <td><input type="number" id="price" step="1" min="0">
                         </td>
                         <td><input type="text" id="description"></td>
+                        <td><input type="text" id="userId"></td>
                         <td>
                             <button @click="addProduct">新增</button>
                         </td>
