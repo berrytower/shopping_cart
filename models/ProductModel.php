@@ -8,7 +8,7 @@ class ProductModel {
     }
 
     public function getProducts($userId) {
-        $sql = "select * from products where owner_id = ?";
+        $sql = "SELECT * FROM products WHERE owner_id = ?";
         $stmt = mysqli_prepare($this->db, $sql);
         mysqli_stmt_bind_param($stmt, 'i', $userId);
         mysqli_stmt_execute($stmt);
@@ -23,7 +23,7 @@ class ProductModel {
     public function addProduct($name, $description, $price, $userId) {
         
 
-        $sql = "insert into products (name, description, price, owner_id) values (?, ?, ?, ?)";
+        $sql = "INSERT INTO products (name, description, price, owner_id) VALUES (?, ?, ?, ?)";
         $stmt = mysqli_prepare($this->db, $sql);
         mysqli_stmt_bind_param($stmt, 'ssdi', $name, $description, $price, $userId);
         if (mysqli_stmt_execute($stmt)) {
@@ -34,14 +34,14 @@ class ProductModel {
         
     }
     public function updateProduct($id, $name, $description, $price) {
-        $sql = "update products SET name=?, description=?, price=? WHERE id=?";
+        $sql = "UPDATE products SET name=?, description=?, price=? WHERE id=?";
         $stmt = mysqli_prepare($this->db, $sql);
         mysqli_stmt_bind_param($stmt, 'ssdi', $name, $description, $price, $id);
         return mysqli_stmt_execute($stmt);
     }
 
     public function deleteProduct($id) {
-        $sql = "delete from products WHERE id=?";
+        $sql = "DELETE FROM products WHERE id=?";
         $stmt = mysqli_prepare($this->db, $sql);
         mysqli_stmt_bind_param($stmt, 'i', $id);
         return mysqli_stmt_execute($stmt);
