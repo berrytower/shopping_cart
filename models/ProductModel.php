@@ -7,12 +7,9 @@ class ProductModel {
         $this->db = $db;
     }
 
-    public function getProducts($userId) {
-        $sql = "select * from products where owner_id = ?";
-        $stmt = mysqli_prepare($this->db, $sql);
-        mysqli_stmt_bind_param($stmt, 'i', $userId);
-        mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
+    public function getAllProducts() {
+        $sql = "select * from products";
+        $result = mysqli_query($this->db, $sql);
         $products = [];
         while ($row = mysqli_fetch_assoc($result)) {
             $products[] = $row;
@@ -20,12 +17,12 @@ class ProductModel {
         return $products;
     }
 
-    public function addProduct($name, $description, $price, $userId) {
+    public function addProduct($name, $description, $price) {
         
 
-        $sql = "insert into products (name, description, price, owner_id) values (?, ?, ?, ?)";
+        $sql = "insert into products (name, description, price) values (?, ?, ?)";
         $stmt = mysqli_prepare($this->db, $sql);
-        mysqli_stmt_bind_param($stmt, 'ssdi', $name, $description, $price, $userId);
+        mysqli_stmt_bind_param($stmt, 'ssd', $name, $description, $price);
         if (mysqli_stmt_execute($stmt)) {
             return mysqli_insert_id($this->db);
         } else {
@@ -34,7 +31,7 @@ class ProductModel {
         
     }
     public function updateProduct($id, $name, $description, $price) {
-        $sql = "update products SET name=?, description=?, price=? WHERE id=?";
+        $sql = "UPDATE products SET name=?, description=?, price=? WHERE id=?";
         $stmt = mysqli_prepare($this->db, $sql);
         mysqli_stmt_bind_param($stmt, 'ssdi', $name, $description, $price, $id);
         return mysqli_stmt_execute($stmt);

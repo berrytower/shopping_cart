@@ -339,6 +339,37 @@
                     that.updateCart();
                 },
 
+                completePurchase() {
+                    const that = this;
+                    if (this.cartItems.length === 0) {
+                        alert("您的購物車是空的！");
+                        return;
+                    }
+
+                    let url = "../controllers/order.php?act=add";
+                    let data = new FormData();
+                    data.append('userId', '您的用戶ID'); // 需要替換為實際的用戶ID
+                    data.append('cartItems', JSON.stringify(this.cartItems));
+                    data.append('shippingOption', this.selectedShippingOption);
+
+                    fetch(url, {
+                        method: 'POST',
+                        body: data
+                    })
+                    .then(function (res) { return res.text(); })
+                    .then(function (data) {
+                        let response = JSON.parse(data);
+                        if (response.success) {
+                            alert("訂單已成功創建！");
+                            // 清空購物車
+                            that.cartItems = [];
+                        } else {
+                            alert("訂單創建失敗：" + response.message);
+                        }
+                    });
+                },
+                
+
                 // 商家角色的方法
                 loadSellerData() {
                     const that = this;

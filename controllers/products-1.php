@@ -40,7 +40,7 @@ elseif ($_GET['act'] === 'DELETE') {
     // 删除商品
     $productId = $_POST['id'];
 
-    // 调用后端方法删除商品
+    // 調用後端方式刪除商品
     $success = $productModel->deleteProduct($productId);
 
     if ($success) {
@@ -57,3 +57,31 @@ elseif ($_GET['act'] === 'DELETE') {
     header('Content-Type: application/json');
     echo json_encode($response);
 }
+else if ($_GET['act'] === 'edit') 
+{
+    // 編輯商品
+    $productId = $_POST['id'];
+    $name = $_POST['name'];
+    $description = $_POST['description'];
+    $price = $_POST['price'];
+
+    $success = $productModel->updateProduct($productId, $name, $description, $price);
+
+    $response = [
+        'success' => $success,
+        'message' => $success ? 'Product updated successfully' : 'Failed to update product'
+    ];
+    header('Content-Type: application/json');
+    echo json_encode($response);
+} 
+else {
+    $response = [
+        'success' => false,
+        'message' => 'Invalid action specified'
+    ];
+
+    header('Content-Type: application/json');
+    echo json_encode($response);
+}
+
+
