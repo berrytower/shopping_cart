@@ -8,7 +8,7 @@ class ProductModel {
     }
 
     public function getProducts($userId) {
-        $sql = "SELECT * FROM products WHERE owner_id = ?";
+        $sql = "SELECT * FROM products WHERE owner_ids = ?";
         $stmt = mysqli_prepare($this->db, $sql);
         mysqli_stmt_bind_param($stmt, 'i', $userId);
         mysqli_stmt_execute($stmt);

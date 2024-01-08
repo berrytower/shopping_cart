@@ -186,7 +186,7 @@
                         <td>{{ product.name }}</td>
                         <td>{{ product.price }}</td>
                         <td>{{ product.description }}</td>
-                        <td>{{ product.userId}}</td>
+                        <td>{{ product.owner_id}}</td>
                         <td>
                             <button @click="editui(product)">編輯</button>
                             <button @click="deleteProduct(product.id)">刪除</button>
@@ -211,7 +211,7 @@
                         <td><input type="number" id="price" step="1" min="0">
                         </td>
                         <td><input type="text" id="description"></td>
-                        <td><input type="text" id="userId"></td>
+                        <td><input type="text" id="owner_id"></td>
                         <td>
                             <button @click="addProduct">新增</button>
                         </td>
