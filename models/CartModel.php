@@ -59,4 +59,13 @@ class CartModel {
 
         return mysqli_stmt_execute($stmt);
     }
+
+    //結帳完清空購物車
+    public function clearCart($userId) {
+        $sql = "DELETE FROM shopping_cart WHERE user_id = ?";
+        $stmt = mysqli_prepare($this->db, $sql);
+        mysqli_stmt_bind_param($stmt, 'i', $userId);
+        return mysqli_stmt_execute($stmt);
+    }
+    
 }

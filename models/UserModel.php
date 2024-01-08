@@ -1,42 +1,45 @@
 <?php
-class UserModel
-{
+require('../dbconfig.php');
+class UserModel {
     private $db;
-    public function __construct($db)
-    {
+    
+    public function __construct($db) {
         $this->db = $db;
+        if ($this->db === null || $this->db->connect_error) {
+            die("Database connection failed: " . $this->db->connect_error);
+        }
     }
-    public function getUser($username)
-    {
+
+    public function getUser($username) {
         // 取得使用者資料
-        $sql = "select * from users where username = ?";
-        $stmt = mysqli_prepare($this->db, $sql);
-        mysqli_stmt_bind_param($stmt, 's', $username);
-        mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
-        return mysqli_fetch_assoc($result);
+        $sql = "SELECT * FROM users WHERE username = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param('s', $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();
     }
-    public function addUser($username, $password, $role)
-    {
+
+    public function addUser($username, $password, $role) {
         // 新增使用者，要檢查 username 是否已經存在
-        $sql = "insert into users (username, password, role) values (?, ?, ?)";
-        $stmt = mysqli_prepare($this->db, $sql);
-        mysqli_stmt_bind_param($stmt, 'ssi', $username, $password, $role);
-        if (mysqli_stmt_execute($stmt)) {
-            return mysqli_insert_id($this->db);
+        $sql = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param('sss', $username, $password, $role);
+        if ($stmt->execute()) {
+            return $this->db->insert_id;
         } else {
             return false;
         }
-        
     }
-    public function addReview($userId, $sellerId, $rating)
-    {
+    
+    public function addReview($userId, $sellerId, $rating){
         //如果使用者已經評價過該賣家，就更新評價，否則就新增評價
-        $sql = "if exists (select * from review where userId = $userId and sellerId = $sellerId)
-        update review set rating = $rating where userId = $userId and sellerId = $sellerId
-        else
-        insert into review (reviewerID, sellerID, rating) values ($userId, $sellerId, $rating)";
+        $sql = "IF EXISTS (SELECT * FROM review WHERE userId = ? AND sellerId = ?)
+        UPDATE review SET rating = ? WHERE userId = ? AND sellerId = ?
+        ELSE
+        INSERT INTO review (reviewerID, sellerID, rating) VALUES (?, ?, ?)";
         $stmt = mysqli_prepare($this->db, $sql);
+        mysqli_stmt_bind_param($stmt, 'iiiii', $userId, $sellerId, $rating, $userId, $sellerId);
         return mysqli_stmt_execute($stmt);
     }
 }

@@ -25,7 +25,7 @@ CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    role INT NOT NULL -- 0: '客戶', 1: '商家', 2: '物流'
+    role ENUM('客戶', '商家', '物流') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- 商品表
@@ -71,7 +71,6 @@ CREATE TABLE reviews (
     reviewerID INT,
     sellerID INT,
     rating INT NOT NULL, -- 1-5顆星
-   
     FOREIGN KEY (reviewerID) REFERENCES users(id),
     FOREIGN KEY (sellerID) REFERENCES users(id),
     PRIMARY KEY (reviewerID, sellerID)
